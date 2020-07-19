@@ -1,0 +1,184 @@
+[
+  {
+    "action": "data",
+    "src": [
+      "Cityscapes Project/*"
+    ],
+    "dst": "$data",
+    "settings": {
+      "classes_mapping": "default"
+    }
+  },
+  {
+    "action": "rename",
+    "src": [
+      "$data"
+    ],
+    "dst": "$data_re-mapped",
+    "settings": {
+      "classes_mapping": {
+        "bicycle": "neutral",
+        "bicyclegroup": "neutral",
+        "bridge": "neutral",
+        "building": "neutral",
+        "bus": "neutral",
+        "car": "neutral",
+        "caravan": "neutral",
+        "cargroup": "neutral",
+        "dynamic": "neutral",
+        "ego vehicle": "neutral",
+        "fence": "neutral",
+        "ground": "neutral",
+        "guard rail": "neutral",
+        "license plate": "neutral",
+        "motorcycle": "neutral",
+        "motorcyclegroup": "neutral",
+        "out of roi": "neutral",
+        "parking": "neutral",
+        "person": "neutral",
+        "persongroup": "neutral",
+        "pole": "neutral",
+        "polegroup": "neutral",
+        "rail track": "neutral",
+        "rider": "neutral",
+        "ridergroup": "neutral",
+        "road": "road",
+        "sidewalk": "neutral",
+        "sky": "neutral",
+        "static": "neutral",
+        "terrain": "neutral",
+        "traffic light": "neutral",
+        "traffic sign": "neutral",
+        "trailer": "neutral",
+        "train": "neutral",
+        "truck": "neutral",
+        "truckgroup": "neutral",
+        "tunnel": "neutral",
+        "vegetation": "neutral",
+        "wall": "neutral"
+      }
+    }
+  },
+  {
+    "action": "resize",
+    "src": [
+      "$data_re-mapped"
+    ],
+    "dst": "$data_resized",
+    "settings": {
+      "width": 512,
+      "height": 512,
+      "aspect_ratio": {
+        "keep": false
+      }
+    }
+  },
+  {
+    "action": "if",
+    "src": [
+      "$data_resized"
+    ],
+    "dst": [
+      "$train",
+      "$val"
+    ],
+    "settings": {
+      "condition": {
+        "project_datasets": [
+          "Cityscapes Project/lindau",
+          "Cityscapes Project/munster"
+        ]
+      }
+    }
+  },
+  {
+    "action": "tag",
+    "src": [
+      "$train"
+    ],
+    "dst": "$train_tagged",
+    "settings": {
+      "tag": "train",
+      "action": "add"
+    }
+  },
+  {
+    "action": "tag",
+    "src": [
+      "$val"
+    ],
+    "dst": "$val_tagged",
+    "settings": {
+      "tag": "val",
+      "action": "add"
+    }
+  },
+  {
+    "action": "objects_filter",
+    "src": [
+      "$train_tagged",
+      "$val_tagged"
+    ],
+    "dst": "$small_filtered",
+    "settings": {
+      "filter_by": {
+        "polygon_sizes": {
+          "action": "delete",
+          "area_size": {
+            "percent": 0.15
+          },
+          "comparator": "less",
+          "filtering_classes": [
+            "road"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "action": "poly2bitmap",
+    "src": ["$small_filtered"],
+    "dst": "$data_bitmap",
+    "settings": {
+      "classes_mapping": {
+        "road": "road_bitmap",
+        "neutral":"neutral_bitmap"
+      }
+    }
+  },
+  {
+    "action": "save_masks",
+    "src": [
+      "$data_bitmap"
+    ],
+    "dst": "CityScapes_RoadDetection",
+    "settings": {
+      "masks_machine": true,
+      "masks_human": true,
+      "gt_machine_color": {
+        "neutral": [
+          0,
+          0,
+          0
+        ],
+        "road": [
+          255,
+          255,
+          255
+        ]
+      },
+      "gt_human_color": {
+        "neutral": [
+          0,
+          0,
+          0
+        ],
+        "road": [
+          255,
+          255,
+          255
+        ]
+      }
+    }
+  }
+]
