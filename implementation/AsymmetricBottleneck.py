@@ -52,6 +52,8 @@ class AsymmetricBottleneck(nn.Module):
                                 bias=False)
 
         self.batch_norm = nn.BatchNorm2d(self.reduced_channels)
+
+        self.batch_norm1 = nn.BatchNorm2d(self.reduced_channels)
         
         self.batch_norm2 = nn.BatchNorm2d(out_channels)
 
@@ -68,7 +70,7 @@ class AsymmetricBottleneck(nn.Module):
         x = self.activation_function1(x)
         x = self.asymmetric_conv1(x)
         x = self.asymmetric_conv2(x)
-        x = self.batch_norm(x)
+        x = self.batch_norm1(x)
         x = self.activation_function2(x)
         x = self.conv2(x)
         x = self.batch_norm2(x)

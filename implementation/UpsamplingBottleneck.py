@@ -55,6 +55,7 @@ class UpsamplingBottleneck(nn.Module):
         self.prelu3 = activation
         
         self.batchnorm = nn.BatchNorm2d(self.reduced_channels)
+        self.batchnorm1 = nn.BatchNorm2d(self.reduced_channels)
         self.batchnorm2 = nn.BatchNorm2d(self.out_channels)
         
     def forward(self, input_map, indices):
@@ -66,7 +67,7 @@ class UpsamplingBottleneck(nn.Module):
         x = self.prelu1(x)
         
         x = self.convt2(x)
-        x = self.batchnorm(x)
+        x = self.batchnorm1(x)
         x = self.prelu2(x)
         
         x = self.convt3(x)

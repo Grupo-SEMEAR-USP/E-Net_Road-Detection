@@ -133,6 +133,8 @@ class ENet(nn.Module):
                                             padding=1,
                                             output_padding=1,
                                             bias=False)
+        #Função de ativação que irá mapear pixels entre 0 a 1
+        self.sigmoid = nn.Sigmoid()
         
     def forward(self, input_image):
         #Bloco inicial
@@ -171,6 +173,8 @@ class ENet(nn.Module):
         x = self.bottleneck51(x)
         #Camada transposta final
         output_image = self.fullconv(x)
+
+        output_image = self.sigmoid(output_image)
 
         return output_image
 
